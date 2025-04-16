@@ -1,0 +1,1 @@
+This folder is used for placement of the pcb library files.
