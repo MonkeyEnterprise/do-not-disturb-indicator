@@ -1,4 +1,4 @@
-24744324246667194
+24737313708344874
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -65848,6 +65848,13 @@ Yellow 5381 Series LED
 0
 2
 2
+Lib_TC2030-IDC-NL
+TC2030-IDC-NL
+
+
+0
+6
+6
 Module
 A20_OLINUXINO_LIME2
 A20 Olinuxino LIME2, 1.2GHz, 512-1024MB RAM, Micro-SD, NAND or eMMC, 1000Mbit Ethernet
@@ -99511,38 +99518,3 @@ Varistor VF
 0
 2
 2
-lib_0ptf0075p
-0ptf0075p
-0PTF0075P-2
-Fuse
-0
-2
-2
-lib_1862107
-1862107
-1862107-1
-Connector
-0
-16
-8
-lib_aod4184a
-TO-252-2
-TO-252/DPAK SMD package, http://www.infineon.com/cms/en/product/packages/PG-TO252/PG-TO252-3-1/
-DPAK TO-252 DPAK-3 TO-252-3 SOT-428
-0
-7
-3
-lib_s8050
-s8050
-3-pin TSOT23 package, http://www.analog.com.tw/pdf/All_In_One.pdf
-TSOT-23
-0
-3
-3
-logo_ijsselzone
-logo_ijsselzone
-
-
-0
-0
-0
