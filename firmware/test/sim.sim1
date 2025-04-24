@@ -1,0 +1,17 @@
+<circuit version="1.1.0-SR1" rev="2005" stepSize="1000000" stepsPS="1000000" NLsteps="100000" reaStep="1000000" animate="0" >
+
+<item itemtype="SerialPort" CircId="SerialPort-12" mainComp="false" Show_id="false" Show_Val="false" Pos="-56,12" rotation="0" hflip="1" vflip="1" label="SerialPort-12" idLabPos="-20,-32" labelrot="0" valLabPos="-16,20" valLabRot="0" Auto="true" Port="COM20" Baudrate="115200 _Bd" DataBits="8 _bits" StopBits="1 _bits" SerialMon="false" />
+
+<item itemtype="Subcircuit" CircId="Nano-9" mainComp="false" Show_id="true" Show_Val="false" Pos="-192,-124" rotation="-180" hflip="1" vflip="1" label="Nano-9" idLabPos="0,-20" labelrot="0" valLabPos="-16,20" valLabRot="0">
+<mainCompProps MainCompId="m328 TQFP-269" Frequency="16 MHz" Program="../.pio/build/nano/firmware.hex" Auto_Load="true" saveEepr="true" MainMcu="true" SerialMon="-1" />
+</item>
+
+<item itemtype="WS2812" CircId="WS2812-17" mainComp="false" Show_id="false" Show_Val="false" Pos="-80,-52" rotation="0" hflip="1" vflip="1" label="WS2812-17" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Rows="1" Cols="8" RstTime="50 _µs" T0H="400 _ns" T0L="850 _ns" T1H="850 _ns" T1H="400 _ns" />
+
+<item itemtype="Connector" uid="Connector-14" startpinid="SerialPort-12-pin1" endpinid="Nano-9-1" pointList="-96,20,-116,20,-116,12,-136,12" />
+
+<item itemtype="Connector" uid="Connector-13" startpinid="Nano-9-0" endpinid="SerialPort-12-pin0" pointList="-136,4,-96,4" />
+
+<item itemtype="Connector" uid="Connector-19" startpinid="Nano-9-6" endpinid="WS2812-17-InPin" pointList="-136,-52,-92,-52" />
+
+</circuit>
