@@ -17,7 +17,7 @@
 
 // Define other constants
 #define BAUD_RATE 115200
-#define RAINBOW_DELAY 250 // Delay for rainbow effect in microseconds
+#define RAINBOW_DELAY 800 // Delay for rainbow effect in microseconds
 #define CMD_LENGTH 7 // Start + R + G + B + Brightness + Checksum + Stop
 
 // Create an instance of the NeoPixel strip

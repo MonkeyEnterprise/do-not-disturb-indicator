@@ -31,6 +31,9 @@
 *.out
 *.app
 
+# Key files
+*.pfx
+
 # Cache and backup files
 *.FCBak
 *.bak
