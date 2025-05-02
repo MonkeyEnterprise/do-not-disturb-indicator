@@ -1,3 +1,9 @@
+# Do no disturb indicator
+
+![Preview](assets/preview.png)
+
+---
+
 # Communication protocol
 
 This document explains the serial communication protocol used to control an RGB LED strip via an Arduino. The code is designed to interface with an Adafruit NeoPixel strip and accepts color commands via a specific serial packet structure.
