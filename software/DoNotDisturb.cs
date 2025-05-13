@@ -36,8 +36,6 @@ namespace DoNotDisturb
             this.InitializeComponent();
             this.LoadSerialComPorts();
 
-            versionLabel.Text = $"v{Application.ProductVersion}";
-
             doNotDisturbButton.ForeColor = LoadFromRegistry(registeryKeyDoNotDisturbColor, Color.Red);
             busyButton.ForeColor = LoadFromRegistry(registeryKeyBusyColor, Color.Orange);
             availableButton.ForeColor = LoadFromRegistry(registeryKeyAvailableColor, Color.Green);
@@ -232,8 +230,8 @@ namespace DoNotDisturb
 
             selectedItem.Checked = true;
 
-            if(serialPort.IsOpen) serialPort.Close();
-           
+            if (serialPort.IsOpen) serialPort.Close();
+
             this.OpenSerialPort();
             if (serialPort.IsOpen)
             {
@@ -242,8 +240,6 @@ namespace DoNotDisturb
                 offButton.Enabled = true;
                 availableButton.Enabled = true;
                 brightnessTrackBar.Enabled = true;
-
-                this.SendCommand(Color.Black);
             }
             else
             {

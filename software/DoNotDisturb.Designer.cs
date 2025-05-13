@@ -36,8 +36,6 @@
             this.brightnessTrackBar = new System.Windows.Forms.TrackBar();
             this.offButton = new System.Windows.Forms.Button();
             this.doNotDisturbButton = new System.Windows.Forms.Button();
-            this.monkeyEnterpriseLabel = new System.Windows.Forms.Label();
-            this.versionLabel = new System.Windows.Forms.Label();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.brightnessTrackBar)).BeginInit();
             this.SuspendLayout();
@@ -93,22 +91,10 @@
             this.doNotDisturbButton.UseVisualStyleBackColor = true;
             this.doNotDisturbButton.Click += new System.EventHandler(this.DoNotDisturbButton_Click);
             // 
-            // monkeyEnterpriseLabel
-            // 
-            resources.ApplyResources(this.monkeyEnterpriseLabel, "monkeyEnterpriseLabel");
-            this.monkeyEnterpriseLabel.Name = "monkeyEnterpriseLabel";
-            // 
-            // versionLabel
-            // 
-            resources.ApplyResources(this.versionLabel, "versionLabel");
-            this.versionLabel.Name = "versionLabel";
-            // 
             // DoNotDisturb
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.versionLabel);
-            this.Controls.Add(this.monkeyEnterpriseLabel);
             this.Controls.Add(this.doNotDisturbButton);
             this.Controls.Add(this.offButton);
             this.Controls.Add(this.brightnessTrackBar);
@@ -137,8 +123,6 @@
         private System.Windows.Forms.TrackBar brightnessTrackBar;
         private System.Windows.Forms.Button offButton;
         private System.Windows.Forms.Button doNotDisturbButton;
-        private System.Windows.Forms.Label monkeyEnterpriseLabel;
-        private System.Windows.Forms.Label versionLabel;
     }
 }
 
