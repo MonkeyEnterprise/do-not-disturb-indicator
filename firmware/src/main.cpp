@@ -1,27 +1,35 @@
 #include <Arduino.h>
+#include <SoftwareSerial.h>
 #include <Adafruit_NeoPixel.h>
 
+// Define the pins for SoftwareSerial communication
+#define RX_PIN PB0 // Pin for receiving data
+#define TX_PIN PB1 // Pin for transmitting data
+
 // Define the pin and number of LEDs
-#define LED_PIN 6
-#define LED_COUNT 8
+#define LED_PIN PB2 // Pin connected to the NeoPixel data input
+#define LED_COUNT 1 // Number of LEDs in the NeoPixel strip
 
 // Define the start and stop bytes for the command protocol
-#define START_BYTE 0xFF
-#define STOP_BYTE 0xFF
+#define START_BYTE 0xFF // Start byte for the command protocol
+#define STOP_BYTE 0xFF  // Stop byte for the command protocol
 
 // Define the response codes for the command protocol
-#define RESPONSE_OK 0xAA
-#define RESPONSE_ERR_START 0xBB
-#define RESPONSE_ERR_STOP 0xCC
-#define RESPONSE_ERR_CHECKSUM 0xDD
+#define RESPONSE_OK 0xAA           // OK response
+#define RESPONSE_ERR_START 0xBB    // Start byte error response
+#define RESPONSE_ERR_STOP 0xCC     // Stop byte error response
+#define RESPONSE_ERR_CHECKSUM 0xDD // Checksum error response
 
 // Define other constants
-#define BAUD_RATE 115200
+#define BAUD_RATE 9600    // Baud rate for SoftwareSerial
 #define RAINBOW_DELAY 800 // Delay for rainbow effect in microseconds
-#define CMD_LENGTH 7 // Start + R + G + B + Brightness + Checksum + Stop
+#define CMD_LENGTH 7      // Start + R + G + B + Brightness + Checksum + Stop
 
-// Create an instance of the NeoPixel strip
-Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
+// Create an instance of the NeoPixel Strip
+Adafruit_NeoPixel Strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
+
+// Create an instance of SoftwareSerial for communication
+SoftwareSerial SoftSerial(RX_PIN, TX_PIN);
 
 /**
  * @brief Calculate the checksum for the command.
@@ -55,25 +63,25 @@ bool validateChecksum(const uint8_t *data)
  */
 void flushSerial()
 {
-  while (Serial.available() > 0)
-    Serial.read();
+  while (SoftSerial.available() > 0)
+    SoftSerial.read();
 }
 
 /**
- * @brief Fill the strip with a color.
- * @param color The color to fill the strip with (RGB format).
+ * @brief Fill the Strip with a color.
+ * @param color The color to fill the Strip with (RGB format).
  * @param wait Delay time between each pixel (in microseconds).
  */
 void rainbow(int wait)
 {
   for (long firstPixelHue = 0; firstPixelHue < 5 * 65536; firstPixelHue += 256)
   {
-    strip.rainbow(firstPixelHue);
-    strip.show();
+    Strip.rainbow(firstPixelHue);
+    Strip.show();
     delayMicroseconds(wait);
   }
-  strip.clear(); // Clear the strip after the rainbow effect
-  strip.show();  // Update strip to clear it
+  Strip.clear(); // Clear the Strip after the rainbow effect
+  Strip.show();  // Update Strip to clear it
 }
 
 /**
@@ -85,19 +93,19 @@ void rainbow(int wait)
  */
 void setColor(int red, int green, int blue, int brightness)
 {
-  strip.clear();
-  strip.setBrightness(brightness);
-  strip.fill(strip.Color(red, green, blue), 0, LED_COUNT);
-  strip.show();
+  Strip.clear();
+  Strip.setBrightness(brightness);
+  Strip.fill(Strip.Color(red, green, blue), 0, LED_COUNT);
+  Strip.show();
 }
 
 /**
- * @brief Setup function to initialize the serial port and LED strip.
+ * @brief Setup function to initialize the serial port and LED Strip.
  */
 void setup()
 {
-  Serial.begin(BAUD_RATE);
-  strip.begin();
+  SoftSerial.begin(BAUD_RATE);
+  Strip.begin();
   rainbow(RAINBOW_DELAY);
 }
 
@@ -106,10 +114,10 @@ void setup()
  */
 void loop()
 {
-  if (Serial.available() >= CMD_LENGTH)
+  if (SoftSerial.available() >= CMD_LENGTH)
   {
     uint8_t buffer[CMD_LENGTH];
-    Serial.readBytes(buffer, CMD_LENGTH);
+    SoftSerial.readBytes(buffer, CMD_LENGTH);
 
     const int startByte = buffer[0];
     const int red = buffer[1];
@@ -121,7 +129,7 @@ void loop()
     // Check Start Byte
     if (startByte != START_BYTE)
     {
-      Serial.write(RESPONSE_ERR_START);
+      SoftSerial.write(RESPONSE_ERR_START);
       flushSerial();
       return;
     }
@@ -129,7 +137,7 @@ void loop()
     // Check Stop Byte
     if (stopByte != STOP_BYTE)
     {
-      Serial.write(RESPONSE_ERR_STOP);
+      SoftSerial.write(RESPONSE_ERR_STOP);
       flushSerial();
       return;
     }
@@ -137,7 +145,7 @@ void loop()
     // Validate Checksum
     if (!validateChecksum(buffer))
     {
-      Serial.write(RESPONSE_ERR_CHECKSUM);
+      SoftSerial.write(RESPONSE_ERR_CHECKSUM);
       flushSerial();
       return;
     }
@@ -145,6 +153,6 @@ void loop()
     setColor(red, green, blue, brightness);
 
     // Send OK response
-    Serial.write(RESPONSE_OK);
+    SoftSerial.write(RESPONSE_OK);
   }
 }
