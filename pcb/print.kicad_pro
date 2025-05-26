@@ -58,7 +58,28 @@
           "width": 0.0
         }
       ],
-      "drc_exclusions": [],
+      "drc_exclusions": [
+        [
+          "hole_clearance|147512000|119174200|391294b2-6a18-40da-8e45-90a8d940f4b9|5335410a-4230-4d50-be8e-8258422ff51c",
+          ""
+        ],
+        [
+          "hole_clearance|147512000|119174200|391294b2-6a18-40da-8e45-90a8d940f4b9|f1546e73-2a07-42ae-9386-6bb9e95ef052",
+          ""
+        ],
+        [
+          "hole_clearance|153612000|119174200|94940737-8921-4b1e-a8f6-32ac4d98e600|108ad922-fe5f-48dd-83ae-0b2612740c93",
+          ""
+        ],
+        [
+          "hole_clearance|153612000|119174200|94940737-8921-4b1e-a8f6-32ac4d98e600|3ad7b5b0-fdda-4caf-bc5c-ba0d33180b1e",
+          ""
+        ],
+        [
+          "lib_footprint_mismatch|150562000|121139200|9593c134-491f-4c2f-8eac-a0f96e2ec396|00000000-0000-0000-0000-000000000000",
+          ""
+        ]
+      ],
       "meta": {
         "version": 2
       },
@@ -109,7 +130,7 @@
         "starved_thermal": "ignore",
         "text_height": "ignore",
         "text_on_edge_cuts": "error",
-        "text_thickness": "warning",
+        "text_thickness": "ignore",
         "through_hole_pad_without_hole": "error",
         "too_many_vias": "error",
         "track_angle": "error",
@@ -559,7 +580,7 @@
           "group_by": false,
           "label": "Qty",
           "name": "${QUANTITY}",
-          "show": true
+          "show": false
         },
         {
           "group_by": false,
@@ -583,25 +604,25 @@
           "group_by": false,
           "label": "Mouser",
           "name": "Mouser",
-          "show": true
+          "show": false
         },
         {
           "group_by": false,
           "label": "Reichelt",
           "name": "Reichelt",
-          "show": true
+          "show": false
         },
         {
           "group_by": false,
           "label": "Distrelec",
           "name": "Distrelec",
-          "show": true
+          "show": false
         },
         {
           "group_by": false,
           "label": "Farnell",
           "name": "Farnell",
-          "show": true
+          "show": false
         },
         {
           "group_by": false,
