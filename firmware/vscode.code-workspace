@@ -6,7 +6,10 @@
 	],
 	"settings": {
 		"cSpell.words": [
-			"Adafruit"
+			"Adafruit",
+			"adafruit",
+			"atmelavr",
+			"attiny"
 		]
 	}
 }
