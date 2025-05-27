@@ -5,12 +5,12 @@
 #include <Adafruit_NeoPixel.h>
 
 // Define the pins for SoftwareSerial communication
-#define RX_PIN PB0 // Pin for receiving data
-#define TX_PIN PB1 // Pin for transmitting data
+#define RX_PIN PB1 // Pin for receiving data
+#define TX_PIN PB0 // Pin for transmitting data
 
 // Define the pin and number of LEDs
 #define LED_PIN PB2                   // Pin connected to the NeoPixel data input
-#define LED_COUNT 1                   // Number of LEDs in the WS2812 LED strip
+#define LED_COUNT 8                   // Number of LEDs in the WS2812 LED strip
 #define LED_TYPE NEO_RGB + NEO_KHZ800 // Type of WS2812 LED strip
 
 // Define the pin for the button
@@ -38,6 +38,6 @@
 #define RESPONSE_ERR_CHECKSUM 0xE3 // Checksum error response
 
 // Define other constants
-#define BAUD_RATE 115200 // Baud rate for SoftwareSerial
+#define BAUD_RATE 9600 // Baud rate for SoftwareSerial
 
 #endif // CONFIGURATION_H

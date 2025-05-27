@@ -16,8 +16,22 @@ public:
      * @brief Constructs a Register object for a specific slot.
      *
      * @param slot The slot number in EEPROM where the data will be stored.
+     * @param initval An optional initial value of type T to be saved in the slot.
      */
-    explicit Register(int slot) : _slot(slot) {}
+    template <typename T>
+    explicit Register(int slot, const T &initval) : _slot(slot)
+    {
+        if (isAddressValid<T>(slot * sizeof(T)))
+            save<T>(initval);
+    }
+    /**
+     * @brief Constructs a Register object for a specific slot.
+     *
+     * @param slot The slot number in EEPROM where the data will be stored.
+     */
+    explicit Register(int slot) : _slot(slot)
+    {
+    }
 
     /**
      * @brief Saves a value of type T to the specified EEPROM slot.

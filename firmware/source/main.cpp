@@ -9,14 +9,14 @@
 Adafruit_NeoPixel pixels(LED_COUNT, LED_PIN, LED_TYPE);
 
 // Create an instance of SoftwareSerial for communication
-SoftwareSerial softSerial(TX_PIN, RX_PIN);
+SoftwareSerial softSerial(RX_PIN, TX_PIN); // RX, TX pins for SoftwareSerial
 
 // Register Instances for Mode Data (each mode has its color and brightness)
 Register regCurrentMode(0);                                                            // Register to store current mode (0-2)
 Register regFadeTime(1);                                                               // Register to store fade time
-Register regRedMode1(10), regGreenMode1(11), regBlueMode1(12), regBrightnessMode1(13); // Mode 1 data
-Register regRedMode2(20), regGreenMode2(21), regBlueMode2(22), regBrightnessMode2(23); // Mode 2 data
-Register regRedMode3(30), regGreenMode3(31), regBlueMode3(32), regBrightnessMode3(33); // Mode 3 data
+Register regRedMode1(10), regGreenMode1(11), regBlueMode1(12), regBrightnessMode1(13); // Registers for mode 1 color and brightness
+Register regRedMode2(20), regGreenMode2(21), regBlueMode2(22), regBrightnessMode2(23); // Registers for mode 2 color and brightness
+Register regRedMode3(30), regGreenMode3(31), regBlueMode3(32), regBrightnessMode3(33); // Registers for mode 3 color and brightness
 
 // Global variables for mode state
 uint8_t currentMode = 0;
@@ -110,6 +110,7 @@ void loadModeData()
  */
 void fadeToColor(uint8_t targetRed, uint8_t targetGreen, uint8_t targetBlue, uint8_t targetBrightness, uint16_t fadeTime)
 {
+
   // Calculate the number of steps based on fadeTime and a fixed delay per step
   const int steps = fadeTime / 10; // 10 milliseconds per step
   for (int i = 0; i <= steps; ++i)
@@ -152,6 +153,15 @@ bool validateChecksum(const uint8_t *data, uint16_t checksum)
   return (sum % 256) == checksum;
 }
 
+void flushSerial()
+{
+  // Flush the serial buffer to ensure no old data is left
+  while (softSerial.available())
+  {
+    softSerial.read();
+  }
+}
+
 /**
  * @brief Setup function to initialize the serial port, LED pixels, and button.
  */
@@ -180,7 +190,7 @@ void loop()
   {
     lastButtonPressTime = millis();
     currentMode = (currentMode + 1) % 3;
-    loadModeData();
+    storeModeData();
     fadeToColor(currentRed, currentGreen, currentBlue, currentBrightness, currentFadeTime);
   }
 
@@ -205,13 +215,13 @@ void loop()
     if (stopByte != 0x1)
     {
       softSerial.write(RESPONSE_ERR_STOP);
-      return;
+      flushSerial();
     }
 
     if (!validateChecksum(buffer, checksum))
     {
       softSerial.write(RESPONSE_ERR_CHECKSUM);
-      return;
+      flushSerial();
     }
 
     switch (startByte)
