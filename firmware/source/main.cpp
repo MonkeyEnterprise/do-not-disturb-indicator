@@ -1,247 +1,169 @@
 #include <Arduino.h>
-#include <Registers.h>
-#include <SoftwareSerial.h>
 #include <Adafruit_NeoPixel.h>
-
+#include <SoftwareSerial.h>
+#include "Registers.h"
+#include "Commands.h"
 #include "Configuration.h"
 
-// Create an instance of the NeoPixel pixels
+// Define the pin numbers and LED strip configuration
 Adafruit_NeoPixel pixels(LED_COUNT, LED_PIN, LED_TYPE);
 
-// Create an instance of SoftwareSerial for communication
-SoftwareSerial softSerial(RX_PIN, TX_PIN); // RX, TX pins for SoftwareSerial
+// Define the Serial communication parameters
+SoftwareSerial tinySerial(RX_PIN, TX_PIN);
 
-// Register Instances for Mode Data (each mode has its color and brightness)
-Register regCurrentMode(0);                                                            // Register to store current mode (0-2)
-Register regFadeTime(1);                                                               // Register to store fade time
-Register regRedMode1(10), regGreenMode1(11), regBlueMode1(12), regBrightnessMode1(13); // Registers for mode 1 color and brightness
-Register regRedMode2(20), regGreenMode2(21), regBlueMode2(22), regBrightnessMode2(23); // Registers for mode 2 color and brightness
-Register regRedMode3(30), regGreenMode3(31), regBlueMode3(32), regBrightnessMode3(33); // Registers for mode 3 color and brightness
-
-// Global variables for mode state
-uint8_t currentMode = 0;
-uint8_t currentRed = 0;
-uint8_t currentGreen = 0;
-uint8_t currentBlue = 0;
-uint8_t currentBrightness = 0;
-uint16_t currentFadeTime = 0;
+// Define the default configuration
+Register cfgReg = Register::create<GlobalVar>();
+GlobalVar globalVar;
+uint8_t buffer[MAX_BUFFER_SIZE];
 
 /**
- * @brief Store the current mode data to the registers.
+ * @brief Set the color of the NeoPixel strip.
+ * @param red The red component of the color (0-255).
+ * @param green The green component of the color (0-255).
+ * @param blue The blue component of the color (0-255).
+ * @param brightness The brightness level (0-255).
  */
-void storeModeData()
+void setColor(const uint8_t red, const uint8_t green, const uint8_t blue, const uint8_t brightness)
 {
-  regCurrentMode.save<uint8_t>(currentMode);
-  regFadeTime.save<uint16_t>(currentFadeTime);
-
-  switch (currentMode)
-  {
-  case 1:
-    regRedMode1.save<uint8_t>(currentRed);
-    regGreenMode1.save<uint8_t>(currentGreen);
-    regBlueMode1.save<uint8_t>(currentBlue);
-    regBrightnessMode1.save<uint8_t>(currentBrightness);
-    break;
-
-  case 2:
-    regRedMode2.save<uint8_t>(currentRed);
-    regGreenMode2.save<uint8_t>(currentGreen);
-    regBlueMode2.save<uint8_t>(currentBlue);
-    regBrightnessMode2.save<uint8_t>(currentBrightness);
-    break;
-
-  case 3:
-    regRedMode3.save<uint8_t>(currentRed);
-    regGreenMode3.save<uint8_t>(currentGreen);
-    regBlueMode3.save<uint8_t>(currentBlue);
-    regBrightnessMode3.save<uint8_t>(currentBrightness);
-    break;
-
-  default:
-    // Do nothing for mode 0, as it is the default state
-    break;
-  }
-}
-
-/**
- * @brief Change to a new mode based on currentMode value.
- */
-void loadModeData()
-{
-  currentMode = regCurrentMode.load<uint8_t>();
-  currentFadeTime = regFadeTime.load<uint16_t>();
-
-  switch (currentMode)
-  {
-  case 1:
-    currentRed = regRedMode1.load<uint8_t>();
-    currentGreen = regGreenMode1.load<uint8_t>();
-    currentBlue = regBlueMode1.load<uint8_t>();
-    currentBrightness = regBrightnessMode1.load<uint8_t>();
-    break;
-
-  case 2:
-    currentRed = regRedMode2.load<uint8_t>();
-    currentGreen = regGreenMode2.load<uint8_t>();
-    currentBlue = regBlueMode2.load<uint8_t>();
-    currentBrightness = regBrightnessMode2.load<uint8_t>();
-    break;
-
-  case 3:
-    currentRed = regRedMode3.load<uint8_t>();
-    currentGreen = regGreenMode3.load<uint8_t>();
-    currentBlue = regBlueMode3.load<uint8_t>();
-    currentBrightness = regBrightnessMode3.load<uint8_t>();
-    break;
-
-  default:
-    // Nothing to do for mode 0, as it is the default state
-    break;
-  }
-}
-
-/**
- * @brief Smoothly fade to a new color.
- * @param targetRed Target red value (0-255)
- * @param targetGreen Target green value (0-255)
- * @param targetBlue Target blue value (0-255)
- * @param targetBrightness Target brightness value (0-255)
- * @param fadeTime The total fade time in milliseconds
- */
-void fadeToColor(uint8_t targetRed, uint8_t targetGreen, uint8_t targetBlue, uint8_t targetBrightness, uint16_t fadeTime)
-{
-
-  // Calculate the number of steps based on fadeTime and a fixed delay per step
-  const int steps = fadeTime / 10; // 10 milliseconds per step
-  for (int i = 0; i <= steps; ++i)
-  {
-    float t = (float)i / steps;
-
-    uint8_t r = currentRed + (targetRed - currentRed) * t;
-    uint8_t g = currentGreen + (targetGreen - currentGreen) * t;
-    uint8_t b = currentBlue + (targetBlue - currentBlue) * t;
-    uint8_t brightness = currentBrightness + (targetBrightness - currentBrightness) * t;
-
-    pixels.clear();
+    pixels.fill(pixels.Color(red, green, blue), 0, LED_COUNT);
     pixels.setBrightness(brightness);
-    pixels.fill(pixels.Color(r, g, b), 0, LED_COUNT);
     pixels.show();
-
-    delay(10); // Delay between each step
-  }
-
-  // Save the new state to global variables
-  currentMode = (currentMode == 0) ? 1 : currentMode; // Ensure mode is not 0 after fade
-  currentRed = targetRed;
-  currentGreen = targetGreen;
-  currentBlue = targetBlue;
-  currentBrightness = targetBrightness;
-  currentFadeTime = fadeTime;
 }
 
 /**
- * @brief Validate the checksum of the received data.
- * @param data Pointer to the data array.
- * @return true if checksum is valid, false otherwise.
+ * @brief Set the operating mode for the NeoPixel strip, applying the corresponding color.
+ * @param mode The mode to set (0, 1, or 2).
  */
-bool validateChecksum(const uint8_t *data, uint16_t checksum)
+void setMode(uint8_t mode)
 {
-  uint16_t sum = 0;
-  for (int i = IDX_RED_BYTE; i <= IDX_BRIGHTNESS_BYTE; ++i) // Calculate checksum from red, green, blue, brightness bytes
-    sum += data[i];
-
-  return (sum % 256) == checksum;
+    switch (mode)
+    {
+    case 0:
+        setColor(globalVar.red_mode0, globalVar.green_mode0, globalVar.blue_mode0, globalVar.brightness_mode0);
+        break;
+    case 1:
+        setColor(globalVar.red_mode1, globalVar.green_mode1, globalVar.blue_mode1, globalVar.brightness_mode1);
+        break;
+    case 2:
+        setColor(globalVar.red_mode2, globalVar.green_mode2, globalVar.blue_mode2, globalVar.brightness_mode2);
+        break;
+    default:
+        tinySerial.write(RESPONSE_ERR_MODE);
+        break;
+    }
+    globalVar.mode = mode;  // Update the current mode
+    cfgReg.save(globalVar); // Save the current configuration to EEPROM
 }
 
-void flushSerial()
+void serialInterrupt()
 {
-  // Flush the serial buffer to ensure no old data is left
-  while (softSerial.available())
-  {
-    softSerial.read();
-  }
+    // Process commands
+    switch (buffer[COMMAND_BYTE_IDX])
+    {
+    case COMMAND_GET_FIRMWARE_VERSION:
+        // No additional data bytes expected for this command.
+        tinySerial.write(globalVar.firmware_mjr);
+        tinySerial.write(globalVar.firmware_mnr);
+        tinySerial.write(globalVar.firmware_patch);
+        break;
+
+    case COMMAND_GET_SERIAL_NUMBER:
+        // No additional data bytes expected for this command.
+        tinySerial.write(globalVar.serial_nr_mjr);
+        tinySerial.write(globalVar.serial_nr_mnr);
+        tinySerial.write(globalVar.serial_nr_patch);
+        break;
+
+    case COMMAND_SET_COLOR:
+    {
+        // Extract color and brightness from the buffer
+        uint8_t red = buffer[COMMAND_SET_RED_BYTE_IDX];
+        uint8_t green = buffer[COMMAND_SET_GREEN_BYTE_IDX];
+        uint8_t blue = buffer[COMMAND_SET_BLUE_BYTE_IDX];
+        uint8_t brightness = buffer[COMMAND_SET_BRIGHTNESS_BYTE_IDX];
+
+        switch (globalVar.mode)
+        {
+        case 0:
+            globalVar.red_mode0 = red;
+            globalVar.green_mode0 = green;
+            globalVar.blue_mode0 = blue;
+            globalVar.brightness_mode0 = brightness;
+            break;
+        case 1:
+            globalVar.red_mode1 = red;
+            globalVar.green_mode1 = green;
+            globalVar.blue_mode1 = blue;
+            globalVar.brightness_mode1 = brightness;
+            break;
+        case 2:
+            globalVar.red_mode2 = red;
+            globalVar.green_mode2 = green;
+            globalVar.blue_mode2 = blue;
+            globalVar.brightness_mode2 = brightness;
+            break;
+        default:
+            tinySerial.write(RESPONSE_ERR_MODE);
+            return;
+        }
+        cfgReg.save(globalVar); // Save the current configuration to EEPROM
+        tinySerial.write(RESPONSE_OK);
+        break;
+    }
+
+    case COMMAND_SET_MODE:
+        uint8_t mode = buffer[COMMAND_SET_MODE_BYTE_IDX];
+
+        if (globalVar.mode != mode)
+            setMode(mode);
+        else
+            tinySerial.write(RESPONSE_OK);
+        break;
+
+    default:
+        // If the command is not recognized, respond with an error.
+        tinySerial.write(RESPONSE_ERR_COMMAND);
+        break;
+    }
 }
 
 /**
- * @brief Setup function to initialize the serial port, LED pixels, and button.
+ * @brief Setup function that initializes the communication,
+ * loads the configuration from EEPROM, and sets default values if necessary.
  */
 void setup()
 {
-  softSerial.begin(BAUD_RATE);
-  pixels.begin();
+    // Initialize tinySerial (SoftwaretinySerial on ATtiny85 or hardware tinySerial on ATmega328)
+    tinySerial.begin(BAUD_RATE);
 
-  pinMode(BUTTON_PIN, INPUT_PULLUP); // Initialize button pin
+    // Initialize NeoPixel strip
+    pixels.begin();
+    pixels.show(); // Clears the strip initially (all LEDs off)
 
-  // Load the current mode from registers
-  loadModeData();
-  fadeToColor(currentRed, currentGreen, currentBlue, currentBrightness, currentFadeTime);
+    // Load or reset configuration
+    GlobalVar temp = cfgReg.loadOrDefault(defaultCfg);
+    if (temp.config_version != defaultCfg.config_version)
+    {
+        globalVar = defaultCfg;
+        cfgReg.save(globalVar); // This save is intentionally left as per user's request
+    }
+    else
+        globalVar = temp;
+
+    setMode(globalVar.mode);
 }
 
 /**
- * @brief Main loop to read commands from the serial port and set LED colors.
+ * @brief Main loop function that continuously checks for incoming data
  */
 void loop()
 {
-  static uint32_t lastButtonPressTime = 0;
+    int byteCount = tinySerial.available();
 
-  // Check button press (change mode on button press)
-  // Check for timer overflow to avoid long press issues
-  if (digitalRead(BUTTON_PIN) == LOW && millis() - lastButtonPressTime > 500)
-  {
-    lastButtonPressTime = millis();
-    currentMode = (currentMode + 1) % 3;
-    storeModeData();
-    fadeToColor(currentRed, currentGreen, currentBlue, currentBrightness, currentFadeTime);
-  }
+    if (byteCount > MAX_BUFFER_SIZE)
+        byteCount = MAX_BUFFER_SIZE;
 
-  // Read serial commands
-  if (softSerial.available() >= CMD_LENGTH)
-  {
-    // Read the command bytes into a buffer
-    uint8_t buffer[CMD_LENGTH];
-    softSerial.readBytes(buffer, CMD_LENGTH);
-
-    // Get the command bytes from the buffer
-    const uint8_t startByte = buffer[IDX_START_BYTE];
-    const uint8_t red = buffer[IDX_RED_BYTE];
-    const uint8_t green = buffer[IDX_GREEN_BYTE];
-    const uint8_t blue = buffer[IDX_BLUE_BYTE];
-    const uint8_t brightness = buffer[IDX_BRIGHTNESS_BYTE];
-    const uint16_t fadeTime = (buffer[IDX_FADE_TIME_BYTE] << 8) | buffer[IDX_FADE_TIME_BYTE + 1];
-    const uint16_t checksum = (buffer[IDX_CHECKSUM_BYTE] << 8) | buffer[IDX_CHECKSUM_BYTE + 1];
-    const uint8_t stopByte = buffer[IDX_STOP_BYTE];
-
-    // Check for stop byte (0x1)
-    if (stopByte != 0x1)
-    {
-      softSerial.write(RESPONSE_ERR_STOP);
-      flushSerial();
-    }
-
-    if (!validateChecksum(buffer, checksum))
-    {
-      softSerial.write(RESPONSE_ERR_CHECKSUM);
-      flushSerial();
-    }
-
-    switch (startByte)
-    {
-    case START_BYTE_CHANGE_MODE:
-      currentMode = (currentMode + 1) % 3;
-      loadModeData();
-      fadeToColor(currentRed, currentGreen, currentBlue, currentBrightness, currentFadeTime);
-      softSerial.write(RESPONSE_OK);
-      break;
-
-    case START_BYTE_SET_COLOR:
-      fadeToColor(red, green, blue, brightness, fadeTime);
-      storeModeData();
-      softSerial.write(RESPONSE_OK);
-      break;
-
-    default:
-      softSerial.write(RESPONSE_ERR_START);
-      return;
-    };
-  }
+    int bytesRead = tinySerial.readBytes(buffer, byteCount);
+    if (bytesRead > 0)
+        serialInterrupt();
 }
