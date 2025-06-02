@@ -1,169 +1,211 @@
-#include <Arduino.h>
-#include <Adafruit_NeoPixel.h>
-#include <SoftwareSerial.h>
-#include "Registers.h"
-#include "Commands.h"
-#include "Configuration.h"
-
-// Define the pin numbers and LED strip configuration
-Adafruit_NeoPixel pixels(LED_COUNT, LED_PIN, LED_TYPE);
-
-// Define the Serial communication parameters
-SoftwareSerial tinySerial(RX_PIN, TX_PIN);
-
-// Define the default configuration
-Register cfgReg = Register::create<GlobalVar>();
-GlobalVar globalVar;
-uint8_t buffer[MAX_BUFFER_SIZE];
+#include "Main.h"
 
 /**
- * @brief Set the color of the NeoPixel strip.
- * @param red The red component of the color (0-255).
- * @param green The green component of the color (0-255).
- * @param blue The blue component of the color (0-255).
- * @param brightness The brightness level (0-255).
+ * @brief Initialize the global variable with default configuration
+ *        If the stored configuration version does not match the default,
  */
-void setColor(const uint8_t red, const uint8_t green, const uint8_t blue, const uint8_t brightness)
+void initGlobalVar()
 {
-    pixels.fill(pixels.Color(red, green, blue), 0, LED_COUNT);
-    pixels.setBrightness(brightness);
-    pixels.show();
-}
-
-/**
- * @brief Set the operating mode for the NeoPixel strip, applying the corresponding color.
- * @param mode The mode to set (0, 1, or 2).
- */
-void setMode(uint8_t mode)
-{
-    switch (mode)
-    {
-    case 0:
-        setColor(globalVar.red_mode0, globalVar.green_mode0, globalVar.blue_mode0, globalVar.brightness_mode0);
-        break;
-    case 1:
-        setColor(globalVar.red_mode1, globalVar.green_mode1, globalVar.blue_mode1, globalVar.brightness_mode1);
-        break;
-    case 2:
-        setColor(globalVar.red_mode2, globalVar.green_mode2, globalVar.blue_mode2, globalVar.brightness_mode2);
-        break;
-    default:
-        tinySerial.write(RESPONSE_ERR_MODE);
-        break;
-    }
-    globalVar.mode = mode;  // Update the current mode
-    cfgReg.save(globalVar); // Save the current configuration to EEPROM
-}
-
-void serialInterrupt()
-{
-    // Process commands
-    switch (buffer[COMMAND_BYTE_IDX])
-    {
-    case COMMAND_GET_FIRMWARE_VERSION:
-        // No additional data bytes expected for this command.
-        tinySerial.write(globalVar.firmware_mjr);
-        tinySerial.write(globalVar.firmware_mnr);
-        tinySerial.write(globalVar.firmware_patch);
-        break;
-
-    case COMMAND_GET_SERIAL_NUMBER:
-        // No additional data bytes expected for this command.
-        tinySerial.write(globalVar.serial_nr_mjr);
-        tinySerial.write(globalVar.serial_nr_mnr);
-        tinySerial.write(globalVar.serial_nr_patch);
-        break;
-
-    case COMMAND_SET_COLOR:
-    {
-        // Extract color and brightness from the buffer
-        uint8_t red = buffer[COMMAND_SET_RED_BYTE_IDX];
-        uint8_t green = buffer[COMMAND_SET_GREEN_BYTE_IDX];
-        uint8_t blue = buffer[COMMAND_SET_BLUE_BYTE_IDX];
-        uint8_t brightness = buffer[COMMAND_SET_BRIGHTNESS_BYTE_IDX];
-
-        switch (globalVar.mode)
-        {
-        case 0:
-            globalVar.red_mode0 = red;
-            globalVar.green_mode0 = green;
-            globalVar.blue_mode0 = blue;
-            globalVar.brightness_mode0 = brightness;
-            break;
-        case 1:
-            globalVar.red_mode1 = red;
-            globalVar.green_mode1 = green;
-            globalVar.blue_mode1 = blue;
-            globalVar.brightness_mode1 = brightness;
-            break;
-        case 2:
-            globalVar.red_mode2 = red;
-            globalVar.green_mode2 = green;
-            globalVar.blue_mode2 = blue;
-            globalVar.brightness_mode2 = brightness;
-            break;
-        default:
-            tinySerial.write(RESPONSE_ERR_MODE);
-            return;
-        }
-        cfgReg.save(globalVar); // Save the current configuration to EEPROM
-        tinySerial.write(RESPONSE_OK);
-        break;
-    }
-
-    case COMMAND_SET_MODE:
-        uint8_t mode = buffer[COMMAND_SET_MODE_BYTE_IDX];
-
-        if (globalVar.mode != mode)
-            setMode(mode);
-        else
-            tinySerial.write(RESPONSE_OK);
-        break;
-
-    default:
-        // If the command is not recognized, respond with an error.
-        tinySerial.write(RESPONSE_ERR_COMMAND);
-        break;
-    }
-}
-
-/**
- * @brief Setup function that initializes the communication,
- * loads the configuration from EEPROM, and sets default values if necessary.
- */
-void setup()
-{
-    // Initialize tinySerial (SoftwaretinySerial on ATtiny85 or hardware tinySerial on ATmega328)
-    tinySerial.begin(BAUD_RATE);
-
-    // Initialize NeoPixel strip
-    pixels.begin();
-    pixels.show(); // Clears the strip initially (all LEDs off)
-
-    // Load or reset configuration
-    GlobalVar temp = cfgReg.loadOrDefault(defaultCfg);
+    GlobalVar temp = cfgReg.load(defaultCfg);
     if (temp.config_version != defaultCfg.config_version)
     {
         globalVar = defaultCfg;
-        cfgReg.save(globalVar); // This save is intentionally left as per user's request
+        cfgReg.save(globalVar);
     }
     else
+    {
         globalVar = temp;
-
-    setMode(globalVar.mode);
+    }
 }
 
 /**
- * @brief Main loop function that continuously checks for incoming data
+ * @brief Handle the command received from the serial interface
+ * @param data Pointer to the command data
+ * @return Response code indicating success or error
+ *
+ * @note The error codes are as follows:
+ * 0x0 - Success
+ * 0x1 - Start of Frame (SOF) error
+ * 0x2 - Command (coma) error
+ * 0x3 - Command value (comv) error
+ * 0x4 - CRC error
+ * 0x5 - End of Frame (EOF) error
+ */
+uint8_t handleCommand(const uint8_t *data)
+{
+    const uint8_t sof = data[0];
+    if (sof != 0x1)
+        return 0x1;
+
+    const uint8_t coma = data[1];
+    if (coma > 4)
+        return 0x2;
+
+    const uint8_t comv = data[2];
+    if (comv > 2)
+        return 0x3;
+
+    const uint8_t red = data[3];
+    const uint8_t green = data[4];
+    const uint8_t blue = data[5];
+    const uint8_t brightness = data[6];
+
+    const uint8_t crc = data[7];
+    const uint8_t crcCalc = (coma + comv + red + green + blue + brightness) % 256;
+    if (crc != crcCalc)
+        return 0x4;
+
+    const uint8_t eof = data[8];
+    if (eof != 0x1)
+        return 0x5;
+
+    return 0x0;
+}
+
+/**
+ * @brief Set the color of the NeoPixel LEDs based on the current mode
+ */
+void setColor()
+{
+    struct ColorRef
+    {
+        uint8_t r, g, b, br;
+    };
+
+    auto getColorRef = [&]() -> ColorRef
+    {
+        switch (globalVar.mode)
+        {
+        case 0:
+            return {globalVar.red_mode0, globalVar.green_mode0, globalVar.blue_mode0, globalVar.brightness_mode0};
+        case 1:
+            return {globalVar.red_mode1, globalVar.green_mode1, globalVar.blue_mode1, globalVar.brightness_mode1};
+        case 2:
+            return {globalVar.red_mode2, globalVar.green_mode2, globalVar.blue_mode2, globalVar.brightness_mode2};
+        default:
+            return {0, 0, 0, 0};
+        }
+    };
+
+    ColorRef color = getColorRef();
+    pixel.setBrightness(color.br);
+    pixel.fill(pixel.Color(color.r, color.g, color.b), 0, LED_COUNT);
+    pixel.show();
+}
+
+/**
+ * @brief Store the current mode in the global variable and save it to EEPROM
+ * @param mode The mode to be stored (0, 1, or 2)
+ */
+void storeMode(const uint8_t mode)
+{
+    globalVar.mode = mode;
+    cfgReg.save(globalVar);
+}
+
+/**
+ * @brief Store the RGB color and brightness values in the global variable based on the current mode
+ * @param red The red component of the color (0-255)
+ * @param green The green component of the color (0-255)
+ * @param blue The blue component of the color (0-255)
+ * @param brightness The brightness of the color (0-255)
+ */
+void storeColor(uint8_t red, uint8_t green, uint8_t blue, uint8_t brightness)
+{
+    struct ColorRef
+    {
+        uint8_t &r, &g, &b, &br;
+    };
+
+    auto getColorRef = [&]() -> ColorRef
+    {
+        switch (globalVar.mode)
+        {
+        case 0:
+            return {globalVar.red_mode0, globalVar.green_mode0, globalVar.blue_mode0, globalVar.brightness_mode0};
+        case 1:
+            return {globalVar.red_mode1, globalVar.green_mode1, globalVar.blue_mode1, globalVar.brightness_mode1};
+        case 2:
+            return {globalVar.red_mode2, globalVar.green_mode2, globalVar.blue_mode2, globalVar.brightness_mode2};
+        default:
+            return {globalVar.red_mode0, globalVar.green_mode0, globalVar.blue_mode0, globalVar.brightness_mode0};
+        }
+    };
+
+    ColorRef color = getColorRef();
+    color.r = red;
+    color.g = green;
+    color.b = blue;
+    color.br = brightness;
+
+    cfgReg.save(globalVar);
+}
+
+/**
+ * @brief Setup function to initialize the serial communication, NeoPixel strip, and global variables
+ */
+void setup()
+{
+    tinySerial.begin(BAUD_RATE);
+    initGlobalVar();
+    pixel.begin();
+    setColor();
+}
+
+/**
+ * @brief Main loop function that continuously checks for button presses and serial commands
  */
 void loop()
 {
-    int byteCount = tinySerial.available();
+    cycleButton.update();
+    if (cycleButton.fell())
+    {
+        globalVar.mode = (globalVar.mode + 1) % 3;
+        cfgReg.save(globalVar);
+        setColor();
+    }
 
-    if (byteCount > MAX_BUFFER_SIZE)
-        byteCount = MAX_BUFFER_SIZE;
+    if (tinySerial.available() >= 9)
+    {
+        uint8_t data[9];
+        tinySerial.readBytes(data, 9);
 
-    int bytesRead = tinySerial.readBytes(buffer, byteCount);
-    if (bytesRead > 0)
-        serialInterrupt();
+        const uint8_t responseCode = handleCommand(data);
+
+        if (responseCode == 0x0)
+        {
+            const uint8_t coma = data[1];
+            const uint8_t comv = data[2];
+            const uint8_t red = data[3];
+            const uint8_t green = data[4];
+            const uint8_t blue = data[5];
+            const uint8_t brightness = data[6];
+
+            switch (coma)
+            {
+            case 0x01:
+                setColor();
+                break;
+            case 0x02:
+                pixel.clear();
+                pixel.show();
+                break;
+            case 0x03:
+                storeMode(comv);
+                setColor();
+                break;
+            case 0x04:
+                storeColor(red, green, blue, brightness);
+                break;
+            default:
+                break;
+            }
+        }
+
+        tinySerial.write(0x1);
+        tinySerial.write(responseCode);
+        for (int i = 0; i < 7; ++i)
+            tinySerial.write((uint8_t)0x0);
+        tinySerial.write(0x1);
+    }
 }
