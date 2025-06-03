@@ -1,0 +1,24 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"cSpell.words": [
+			"adafruit",
+			"Adafruit",
+			"atmelavr",
+			"attiny",
+			"comc",
+			"comv",
+			"DIGITALINPUT",
+			"millis",
+			"println",
+			"Tronics",
+			"Uefuse",
+			"Uhfuse",
+			"Ulfuse"
+		]
+	}
+}
