@@ -15,10 +15,10 @@
 
 // Define the CPU frequency for the AVR microcontroller
 // ------- Hardware Configuration -------
-#define TX_PIN PB1
-#define RX_PIN PB0
-#define LED_PIN PB2
-#define BUTTON_PIN PB3
+#define TX_PIN PB4
+#define RX_PIN PB3
+#define LED_PIN PB1
+#define BUTTON_PIN PB2
 
 // ------- Software Configuration -------
 #define BAUD_RATE 9600
@@ -36,11 +36,11 @@ struct GlobalVar
 };
 
 const GlobalVar defaultCfg = {
-    1,               // config_version
-    0,               // mode
-    255, 0, 0, 255,  // mode 0: red, green, blue, brightness
-    0, 255, 0, 255,  // mode 1: red, green, blue, brightness
-    255, 255, 0, 255 // mode 2: red, green, blue, brightness
+    2,               // config_version
+    1,               // mode
+    255, 0, 0, 127,  // mode 0: red, green, blue, brightness
+    0, 255, 0, 127,  // mode 1: red, green, blue, brightness
+    255, 255, 0, 127 // mode 2: red, green, blue, brightness
 };
 
 #endif // __CONFIGURATION_H__
