@@ -15,7 +15,7 @@ Easily set your status (Do Not Disturb, Busy, Available, Off), adjust brightness
 
 ## Requirements
 
-- Python 3.7+
+- Python 3.13+
 - [pyserial](https://pypi.org/project/pyserial/)
 - [pystray](https://pypi.org/project/pystray/)
 - [Pillow](https://pypi.org/project/Pillow/)
