@@ -1,0 +1,21 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"cSpell.words": [
+			"checkmark",
+			"checkmarks",
+			"comc",
+			"comv",
+			"getrgb",
+			"initialcolor",
+			"levelname",
+			"pyserial",
+			"pystray",
+			"rtype"
+		],
+	}
+}
