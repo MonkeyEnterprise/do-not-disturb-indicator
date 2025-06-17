@@ -1,43 +1,46 @@
-#ifndef CONFIGURATION_H
-#define CONFIGURATION_H
+/**
+ * @file Configuration.h
+ * @brief Configuration header file for the device firmware.
+ *
+ * @copyright (c) 2025 Lorenzo Pouw, PouwerTronics/MonkeyEnterprise.
+ * Licensed under the BSD license. This notice must remain in all redistributions.
+ */
+
+#ifndef __CONFIGURATION_H__
+#define __CONFIGURATION_H__
 
 #include <Arduino.h>
 #include <Adafruit_NeoPixel.h>
 
-// Define the pins for SoftwareSerial communication
-#define RX_PIN PB1 // Pin for receiving data
-#define TX_PIN PB0 // Pin for transmitting data
+// Define the CPU frequency for the AVR microcontroller
+// ------- Hardware Configuration -------
+#define TX_PIN PB0
+#define RX_PIN PB1
+#define LED_PIN PB2
+#define CPU_PIN PB4
+#define BUTTON_PIN PB3
 
-// Define the pin and number of LEDs
-#define LED_PIN PB2                   // Pin connected to the NeoPixel data input
-#define LED_COUNT 8                   // Number of LEDs in the WS2812 LED strip
-#define LED_TYPE NEO_RGB + NEO_KHZ800 // Type of WS2812 LED strip
+// ------- Software Configuration -------
+#define BAUD_RATE 9600
+#define LED_COUNT 8
+#define LED_TYPE NEO_GRB + NEO_KHZ800
 
-// Define the pin for the button
-#define BUTTON_PIN PB3 // Pin for the button
+// ------- Global Variables -------
+struct GlobalVar
+{
+    uint8_t config_version;
+    uint8_t mode;
+    uint8_t red_mode0, green_mode0, blue_mode0, brightness_mode0;
+    uint8_t red_mode1, green_mode1, blue_mode1, brightness_mode1;
+    uint8_t red_mode2, green_mode2, blue_mode2, brightness_mode2;
+};
 
-// Define the start and stop bytes for the command protocol
-#define START_BYTE_CHANGE_MODE 0xA0 // Start byte for changing mode command
-#define START_BYTE_SET_COLOR 0xA1   // Start byte for setting color command
+const GlobalVar defaultCfg = {
+    2,               // config_version
+    1,               // mode
+    255, 0, 0, 255,  // mode 0: red, green, blue, brightness
+    0, 255, 0, 255,  // mode 1: red, green, blue, brightness
+    255, 255, 0, 255 // mode 2: red, green, blue, brightness
+};
 
-// Define the command length and indices for the command buffer
-#define IDX_START_BYTE 0      // Index of the start byte in the command buffer
-#define IDX_RED_BYTE 1        // Index of the red byte in the command buffer
-#define IDX_GREEN_BYTE 2      // Index of the green byte in the command buffer
-#define IDX_BLUE_BYTE 3       // Index of the blue byte in the command buffer
-#define IDX_BRIGHTNESS_BYTE 4 // Index of the brightness byte in the command buffer
-#define IDX_FADE_TIME_BYTE 5  // Index of the fade time byte in the command buffer (2 bytes total)
-#define IDX_CHECKSUM_BYTE 7   // Index of the checksum byte in the command buffer (2 bytes total)
-#define IDX_STOP_BYTE 9       // Index of the stop byte in the command buffer
-#define CMD_LENGTH 10         // Total length of the command buffer
-
-// Define the response codes for the command protocol
-#define RESPONSE_OK 0xA0           // OK response
-#define RESPONSE_ERR_START 0xE1    // Start byte error response
-#define RESPONSE_ERR_STOP 0xE2     // Stop byte error response
-#define RESPONSE_ERR_CHECKSUM 0xE3 // Checksum error response
-
-// Define other constants
-#define BAUD_RATE 9600 // Baud rate for SoftwareSerial
-
-#endif // CONFIGURATION_H
+#endif // __CONFIGURATION_H__

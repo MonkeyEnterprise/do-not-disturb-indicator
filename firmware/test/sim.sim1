@@ -1,17 +1,35 @@
 <circuit version="1.1.0-SR1" rev="2005" stepSize="1000000" stepsPS="1000000" NLsteps="100000" reaStep="1000000" animate="0" >
 
-<item itemtype="SerialPort" CircId="SerialPort-12" mainComp="false" Show_id="false" Show_Val="false" Pos="-56,12" rotation="0" hflip="1" vflip="1" label="SerialPort-12" idLabPos="-20,-32" labelrot="0" valLabPos="-16,20" valLabRot="0" Auto="true" Port="COM20" Baudrate="115200 _Bd" DataBits="8 _bits" StopBits="1 _bits" SerialMon="false" />
+<item itemtype="Push" CircId="Push-2" mainComp="false" Show_id="false" Show_Val="false" Pos="-36,40" rotation="90" hflip="1" vflip="1" label="Push-2" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Norm_Close="false" Poles="1" />
 
-<item itemtype="Subcircuit" CircId="Nano-9" mainComp="false" Show_id="true" Show_Val="false" Pos="-192,-124" rotation="-180" hflip="1" vflip="1" label="Nano-9" idLabPos="0,-20" labelrot="0" valLabPos="-16,20" valLabRot="0">
-<mainCompProps MainCompId="m328 TQFP-269" Frequency="16 MHz" Program="../.pio/build/nano/firmware.hex" Auto_Load="true" saveEepr="true" MainMcu="true" SerialMon="-1" />
-</item>
+<item itemtype="WS2812" CircId="WS2812-6" mainComp="false" Show_id="false" Show_Val="false" Pos="16,-12" rotation="0" hflip="1" vflip="1" label="WS2812-6" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Rows="1" Cols="1" RstTime="50 _µs" T0H="400 _ns" T0L="850 _ns" T1H="400 _ns" T1H="400 _ns" />
 
-<item itemtype="WS2812" CircId="WS2812-17" mainComp="false" Show_id="false" Show_Val="false" Pos="-80,-52" rotation="0" hflip="1" vflip="1" label="WS2812-17" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Rows="1" Cols="8" RstTime="50 _µs" T0H="400 _ns" T0L="850 _ns" T1H="850 _ns" T1H="400 _ns" />
+<item itemtype="MCU" CircId="tiny85-8" mainComp="false" Show_id="true" Show_Val="false" Pos="-124,-60" rotation="0" hflip="1" vflip="1" label="tiny85-8" idLabPos="0,-20" labelrot="0" valLabPos="-16,20" valLabRot="0" Frequency="8 MHz" Program="../.pio/build/attiny85/firmware.hex" Auto_Load="true" saveEepr="true" Logic_Symbol="true" Rst_enabled="true" Ext_Osc="false" Wdt_enabled="false" Clk_Out="false" MainMcu="true" eeprom="2,1,255,0,0,255,0,255,0,255,255,255,0,255,101,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0," />
 
-<item itemtype="Connector" uid="Connector-14" startpinid="SerialPort-12-pin1" endpinid="Nano-9-1" pointList="-96,20,-116,20,-116,12,-136,12" />
+<item itemtype="Resistor" CircId="Resistor-9" mainComp="false" ShowProp="Resistance" Show_id="false" Show_Val="true" Pos="-112,12" rotation="0" hflip="1" vflip="1" label="Resistor-9" idLabPos="-16,-24" labelrot="0" valLabPos="-10.9617,-8.2751" valLabRot="0" Resistance="10 kΩ" />
 
-<item itemtype="Connector" uid="Connector-13" startpinid="Nano-9-0" endpinid="SerialPort-12-pin0" pointList="-136,4,-96,4" />
+<item itemtype="Fixed Voltage" CircId="Fixed Voltage-10" mainComp="false" Show_id="false" Show_Val="false" Pos="-172,12" rotation="0" hflip="1" vflip="1" label="Fixed Voltage-10" idLabPos="-64,-24" labelrot="0" valLabPos="-16,8" valLabRot="0" Voltage="5 V" Out="true" />
 
-<item itemtype="Connector" uid="Connector-19" startpinid="Nano-9-6" endpinid="WS2812-17-InPin" pointList="-136,-52,-92,-52" />
+<item itemtype="Ground" CircId="Ground-12" mainComp="false" Show_id="false" Show_Val="false" Pos="-36,88" rotation="0" hflip="1" vflip="1" label="Ground-12" idLabPos="-16,8" labelrot="0" valLabPos="-16,20" valLabRot="0" />
+
+<item itemtype="Led" CircId="Led-14" mainComp="false" Show_id="false" Show_Val="false" Pos="-156,80" rotation="90" hflip="1" vflip="1" label="Led-14" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Color="Green" Grounded="true" Threshold="3.5 V" MaxCurrent="30 mA" Resistance="0.6 Ω" />
+
+<item itemtype="SerialTerm" CircId="SerialTerm-16" mainComp="false" Show_id="false" Show_Val="false" Pos="32,-44" rotation="0" hflip="1" vflip="1" label="SerialTerm-16" idLabPos="-20,-32" labelrot="0" valLabPos="-16,20" valLabRot="0" Baudrate="9600 _Bd" DataBits="8 _bits" StopBits="1 _bits" SerialMon="false" />
+
+<item itemtype="Connector" uid="Connector-14" startpinid="WS2812-6-InPin" endpinid="tiny85-8-PORTB2" pointList="4,-12,-24,-12,-24,-36,-84,-36" />
+
+<item itemtype="Connector" uid="Connector-15" startpinid="Push-2-pinP0" endpinid="tiny85-8-PORTB3" pointList="-36,24,-36,-28,-84,-28" />
+
+<item itemtype="Connector" uid="Connector-17" startpinid="Fixed Voltage-10-outnod" endpinid="Resistor-9-lPin" pointList="-156,12,-128,12" />
+
+<item itemtype="Connector" uid="Connector-22" startpinid="tiny85-8-PORTB5" endpinid="Resistor-9-rPin" pointList="-84,-12,-76,-12,-76,12,-96,12" />
+
+<item itemtype="Connector" uid="Connector-29" startpinid="Ground-12-Gnd" endpinid="Push-2-switch0pinN" pointList="-36,72,-36,56" />
+
+<item itemtype="Connector" uid="Connector-36" startpinid="Led-14-lPin" endpinid="tiny85-8-PORTB4" pointList="-156,64,-156,28,-60,28,-60,-20,-84,-20" />
+
+<item itemtype="Connector" uid="Connector-43" startpinid="tiny85-8-PORTB0" endpinid="SerialTerm-16-pin0" pointList="-84,-52,8,-52" />
+
+<item itemtype="Connector" uid="Connector-44" startpinid="SerialTerm-16-pin1" endpinid="tiny85-8-PORTB1" pointList="8,-36,-16,-36,-16,-44,-84,-44" />
 
 </circuit>

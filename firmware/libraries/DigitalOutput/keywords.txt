@@ -1,0 +1,22 @@
+#######################################
+# Syntax Coloring Map For DigitalOutput
+#######################################
+# Class
+#######################################
+
+DigitalOutput    KEYWORD1
+
+#######################################
+# Methods and Functions
+#######################################
+
+write           KEYWORD2
+toggle          KEYWORD2
+enableBlink     KEYWORD2
+disableBlink    KEYWORD2
+update          KEYWORD2
+read            KEYWORD2
+
+#######################################
+# Constants
+#######################################
