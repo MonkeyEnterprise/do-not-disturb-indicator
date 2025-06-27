@@ -7,7 +7,6 @@
  */
 
 #include "Main.h"
-#include "DigitalInput.h"
 
 /**
  * @brief Get the RGB color and brightness values based on the current mode
@@ -98,6 +97,18 @@ void setColor()
 }
 
 /**
+ * @brief Flush the receive buffer to clear any pending data
+ */
+void flushReceiveBuffer()
+{
+    // Flush the receive buffer to clear any pending data
+    while (tinySerial.available())
+    {
+        tinySerial.read();
+    }
+}
+
+/**
  * @brief Send a response back to the serial interface, including a CRC for error checking
  * @param responseCode The response code to be sent.
  * @param comc The command value (comc) to be sent (0-255), optional, default is 0x0.
@@ -124,6 +135,7 @@ void sendResponse(const uint8_t responseCode,
     tinySerial.write(crc);          // CRC
     tinySerial.write(0x01);         // End of Frame
     tinySerial.flush();             // Ensure all data is sent
+    flushReceiveBuffer(); // Clear the receive buffer after sending
 }
 
 /**
@@ -185,6 +197,8 @@ void setup()
     // Initialize the serial communication with the specified baud rate
     tinySerial.begin(BAUD_RATE);
 
+    flushReceiveBuffer();
+
     // Initialize the global variable with default configuration
     GlobalVar temp = cfgReg.load(defaultCfg);
     if (temp.config_version != defaultCfg.config_version)
@@ -199,7 +213,7 @@ void setup()
     // Initialize the pixel strip
     pixel.begin();
     setColor();
-    cpuLed.enableBlink(1000);
+    cpuLed.enableBlink(500);
 }
 
 /**
@@ -219,7 +233,7 @@ void loop()
     // Check if there are enough bytes available in the serial buffer to read a command
     // The command should be 9 bytes long: SOF (1 byte) + coma (1 byte) + comc (1 byte) + RGB (3 bytes) + brightness (1 byte) + CRC (1 byte) + EOF (1 byte)
     // If there are enough bytes, read the command and handle it
-    if (tinySerial.available() >= 9)
+    if (tinySerial.available() == 9)
     {
         uint8_t data[9];
         tinySerial.readBytes(data, 9);

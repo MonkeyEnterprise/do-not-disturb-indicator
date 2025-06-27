@@ -1,1 +1,1 @@
-# This directory is intended for the project pcb files
+This directory is intended for the project pcb.

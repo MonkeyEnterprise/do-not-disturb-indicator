@@ -1,7 +1,7 @@
 <!-- PROJECT LOGO -->
 <div align="center">
     <img src="assets/docs.png" alt="Logo" width="80" height="80">
-<h3 align="center">00.25.0029 - Do Not Disturb Indicator Light</h3>
+<h3 align="center">00.25.0029 - Do Not Disturb Indicator</h3>
 </div>
 <!-- ABOUT THE PROJECT -->
 
@@ -9,7 +9,8 @@
 
 ---
 
-![screenshot](assets/preview.png)
+![screenshot](assets/preview_1.png)
+![screenshot](assets/preview_2.png)
 
 This repository provides a comprehensive system to control an WS2812B LED using an ATTINY-85. It includes PCB files, 3D print files, firmware, and software for setting up and operating the system. The firmware implements a serial communication protocol for sending color and brightness commands to the WS2812B LED, using a packet structure with error-checking mechanisms. This setup allows for easy integration and customization of the do not disturb sign.
 

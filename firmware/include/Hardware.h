@@ -31,6 +31,6 @@ DigitalOutput cpuLed(CPU_PIN, LOW);
 Adafruit_NeoPixel pixel(LED_COUNT, LED_PIN, LED_TYPE);
 
 // Define the Serial communication parameters
-SoftwareSerial tinySerial(RX_PIN, TX_PIN);
+SoftwareSerial tinySerial(RX_PIN, TX_PIN, false);
 
 #endif // __HARDWARE_H__

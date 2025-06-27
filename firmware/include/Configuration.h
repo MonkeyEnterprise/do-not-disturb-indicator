@@ -37,7 +37,7 @@ struct GlobalVar
 
 const GlobalVar defaultCfg = {
     2,               // config_version
-    1,               // mode
+    0,               // mode
     255, 0, 0, 255,  // mode 0: red, green, blue, brightness
     0, 255, 0, 255,  // mode 1: red, green, blue, brightness
     255, 255, 0, 255 // mode 2: red, green, blue, brightness

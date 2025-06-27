@@ -58,7 +58,32 @@
           "width": 0.0
         }
       ],
-      "drc_exclusions": [],
+      "drc_exclusions": [
+        [
+          "hole_clearance|145037600|121814600|cbf94d49-b4ba-4e7e-ad5f-c8038793b4d1|04cc51e5-d41b-460d-aa6d-b0283789c329",
+          "This is a default library item."
+        ],
+        [
+          "hole_clearance|145037600|121814600|cbf94d49-b4ba-4e7e-ad5f-c8038793b4d1|fb2e96b8-1ce5-4268-8015-68410c79b79c",
+          "This is a default library item."
+        ],
+        [
+          "hole_clearance|151137600|121814600|442ec626-df0b-4ad2-a5a6-273ff9d85bd6|2b638f97-e132-429f-9fd0-a8a150a00227",
+          "This is a default library item."
+        ],
+        [
+          "hole_clearance|151137600|121814600|442ec626-df0b-4ad2-a5a6-273ff9d85bd6|fa2d9f0f-5159-4960-9230-0ca872fd4aa0",
+          "This is a default library item."
+        ],
+        [
+          "track_dangling|146354800|122936000|094668bb-7cfb-4f13-9d67-8edd1a0bc9fc|00000000-0000-0000-0000-000000000000",
+          "This is for the VBUS line."
+        ],
+        [
+          "via_dangling|146913600|122936000|98028b35-25d1-43a2-ae11-023ceaa4e025|00000000-0000-0000-0000-000000000000",
+          "This is for the VBUS line"
+        ]
+      ],
       "meta": {
         "version": 2
       },
@@ -126,9 +151,9 @@
         "max_error": 0.005,
         "min_clearance": 0.0,
         "min_connection": 0.0,
-        "min_copper_edge_clearance": 0.25,
+        "min_copper_edge_clearance": 0.2,
         "min_groove_width": 0.0,
-        "min_hole_clearance": 0.25,
+        "min_hole_clearance": 0.2,
         "min_hole_to_hole": 0.25,
         "min_microvia_diameter": 0.2,
         "min_microvia_drill": 0.1,
@@ -654,7 +679,7 @@
       "workbook_filename": ""
     },
     "page_layout_descr_file": "kicad-embed://titleblock_monkeyenterprise.kicad_wks",
-    "plot_directory": "C:/Temp/SCHEME_print.pdf",
+    "plot_directory": "C:/Temp/print_scheme.pdf",
     "space_save_all_events": true,
     "spice_current_sheet_as_root": false,
     "spice_external_command": "spice \"%I\"",
