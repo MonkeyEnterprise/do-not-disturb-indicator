@@ -1,0 +1,24 @@
+{
+    "default": {
+        "primary": "#3c3c3c",
+        "accent": "#ffffff"
+    },
+    "config": {
+        "dimmer_factor": 0.5,
+        "baudrate": 115200,
+        "com_port": "COM9"
+    },
+    "dnd": {
+        "primary": "#ff0000"
+    },
+    "busy": {
+        "primary": "#ffae00"
+    },
+    "available": {
+        "primary": "#009600",
+        "accent": "#c8ffc8"
+    },
+    "off": {
+        "primary": "#3c3c3c"
+    }
+}

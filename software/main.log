@@ -1,0 +1,23 @@
+2025-07-10 20:08:26,390 - INFO - Starting NeoPixel Status application...
+2025-07-10 20:08:26,404 - INFO - settings.json not found. Using default settings.
+2025-07-10 20:08:26,988 - INFO - Taskbar menu 'NeoPixel Status' is running. Initial status: Off
+2025-07-10 20:08:39,049 - INFO - Attempting to select COM port: COM9
+2025-07-10 20:08:39,065 - INFO - Attempting to open serial port: COM9 at 115200 baud.
+2025-07-10 20:08:39,076 - INFO - Successfully connected to COM port: COM9
+2025-07-10 20:08:39,080 - INFO - Application status changed to: Available
+2025-07-10 20:08:40,097 - WARNING - Expected 9 bytes, but received 0.
+2025-07-10 20:08:40,100 - WARNING - Failed to receive a valid response from the device after sending command: 010302000000000501. Response was: None
+2025-07-10 20:08:40,118 - INFO - Sent SET_MODE command for mode 2.
+2025-07-10 20:08:40,174 - INFO - Settings saved to settings.json
+2025-07-10 20:08:49,788 - INFO - Application status changed to: Dnd
+2025-07-10 20:08:50,800 - WARNING - Expected 9 bytes, but received 0.
+2025-07-10 20:08:50,809 - WARNING - Failed to receive a valid response from the device after sending command: 010300000000000301. Response was: None
+2025-07-10 20:08:50,811 - INFO - Sent SET_MODE command for mode 0.
+2025-07-10 20:09:05,647 - INFO - Opening color picker for 'available' status...
+2025-07-10 20:09:06,912 - INFO - Selected primary color for 'available': #009600
+2025-07-10 20:09:06,955 - INFO - Set primary color for 'available' to #009600
+2025-07-10 20:09:06,962 - INFO - Derived accent color for 'available' to #c8ffc8
+2025-07-10 20:09:07,982 - WARNING - Expected 9 bytes, but received 0.
+2025-07-10 20:09:07,992 - WARNING - Failed to receive a valid response from the device after sending command: 010402009600FF9B01. Response was: None
+2025-07-10 20:09:08,023 - INFO - Sent STORE_COLOR command for mode 2 with primary color update: #009600
+2025-07-10 20:09:08,050 - INFO - Settings saved to settings.json
