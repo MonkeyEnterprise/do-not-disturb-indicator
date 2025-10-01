@@ -535,7 +535,7 @@
       "specctra_dsn": "",
       "step": "../../../Temp/print_model.step",
       "svg": "",
-      "vrml": "C:/Temp/model_print.wrl"
+      "vrml": "jlcpcb/production_files/model_print.wrl"
     },
     "page_layout_descr_file": "kicad-embed://titleblock_monkeyenterprise.kicad_wks"
   },
